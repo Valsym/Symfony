@@ -1,0 +1,94 @@
+{% extends 'base_new.html.twig' %}
+
+{% block title %}Новая статья{% endblock %}
+
+{% block content %}
+    <h1>Создание новой статьи</h1>
+
+    {% for label, messages in app.flashes %}
+        {% for message in messages %}
+            <div class="flash-{{ label }}">
+                {{ message }}
+            </div>
+        {% endfor %}
+    {% endfor %}
+
+    {{ form_start(form) }}
+    {{ form_errors(form) }}
+    {{ form_row(form.title) }}
+    {{ form_row(form.content) }}
+    {{ form_widget(form.save, {'attr': {'class': 'btn btn-primary'}}) }}
+    {{ form_end(form) }}
+{% endblock %}
+
+
+
+{#{% extends 'base_new.html.twig' %}#}
+
+{#{% form_theme form _self %} #}{# Подключаем локальную тему #}
+
+{#{% block _article_title_widget %}#}
+{#    <div class="mb-3">#}
+{#        {{ form_label(form, null, {'label_attr': {'class': 'form-label'}}) }}#}
+{#        {{ form_widget(form, {'attr': {'class': 'form-control'}}) }}#}
+{#        {{ form_errors(form, {'attr': {'class': 'text-danger'}}) }}#}
+{#    </div>#}
+{#{% endblock %}#}
+
+{#{% block title %}Новая статья{% endblock %}#}
+
+{#{% block content %}#}
+{#    <h1>Создание новой статьи</h1>#}
+
+{#    {% for label, messages in app.flashes %}#}
+{#        {% for message in messages %}#}
+{#            <div class="flash-{{ label }}">#}
+{#                {{ message }}#}
+{#            </div>#}
+{#        {% endfor %}#}
+{#    {% endfor %}#}
+
+{#    #}{# Только один вызов form_start и form_widget #}
+{#    {{ form_start(form) }}#}
+{#    {{ form_errors(form) }}#}
+
+{#    #}{# Отрисовываем все поля одним вызовом,#}
+{#           при этом _article_title_widget переопределит отрисовку title #}
+{#    {{ form_widget(form.title) }}#}
+
+{#    <div class="mb-3">#}
+{#        {{ form_label(form.content, 'Текст статьи', {'label_attr': {'class': 'form-label'}}) }}#}
+{#        {{ form_widget(form.content, {'attr': {'class': 'form-control'}}) }}#}
+{#        {{ form_errors(form.content, {'attr': {'class': 'text-danger'}}) }}#}
+{#    </div>#}
+
+{#    {{ form_widget(form.save, {'attr': {'class': 'btn btn-primary'}}) }}#}
+{#    {{ form_end(form) }}#}
+{#{% endblock %}#}
+
+
+{#{% extends 'base_new.html.twig' %}#}
+
+{#{% form_theme form _self %} #}{# Подключаем локальную тему #}
+
+{#{% block _article_title_widget %}#}
+{#    <div class="mb-3">#}
+{#        {{ form_label(form, null, {'label_attr': {'class': 'form-label'}}) }}#}
+{#        {{ form_widget(form, {'attr': {'class': 'form-control'}}) }}#}
+{#        {{ form_errors(form, {'attr': {'class': 'text-danger'}}) }}#}
+{#    </div>#}
+{#{% endblock %}#}
+
+{#{{ form_start(form) }}#}
+{#    {{ form_errors(form) }} #}{# Общие ошибки формы #}
+
+{#    {{ form_label(form.title) }}#}
+{#    {{ form_widget(form.title) }}#}
+{#    {{ form_errors(form.title) }} #}{# Ошибки для title #}
+
+{#    {{ form_label(form.content) }}#}
+{#    {{ form_widget(form.content) }}#}
+{#    {{ form_errors(form.content) }}#}
+
+{#    {{ form_widget(form.save) }}#}
+{#{{ form_end(form) }}#}

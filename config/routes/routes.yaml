@@ -23,3 +23,11 @@ product_page:
 api_user:
     path: api/user
     controller: App\Controller\ProductController::apiData
+
+form_new:
+    path: /form_new
+    controller: App\Controller\ArticleController::new
+
+user_register:
+    path: /register
+    controller: App\Controller\UserController::register
