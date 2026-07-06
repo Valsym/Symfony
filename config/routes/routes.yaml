@@ -1,0 +1,25 @@
+hello_page:
+    path: /hello
+    controller: App\Controller\DefaultController::hello
+
+blog_show:
+    path: /blog/{id}
+    controller: App\Controller\BlogController::show
+
+blog_index:
+    path: /blog
+    controller: App\Controller\BlogController::index
+
+contact_page:
+    path: /contact
+    controller: App\Controller\ContactController::show
+
+product_page:
+    path: /product/{slug}
+    controller: App\Controller\ProductController::show
+    requirements:
+        slug: '[a-zA-Z0-9-]+'
+
+api_user:
+    path: api/user
+    controller: App\Controller\ProductController::apiData
