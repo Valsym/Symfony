@@ -1,6 +1,6 @@
-hello_page:
-    path: /hello
-    controller: App\Controller\DefaultController::hello
+#hello_page:
+#    path: /hello
+#    controller: App\Controller\DefaultController::hello
 
 blog_show:
     path: /blog/{id}
