@@ -31,3 +31,7 @@ form_new:
 user_register:
     path: /register
     controller: App\Controller\UserController::register
+
+test_users:
+    path: /test-users
+    controller: App\Controller\UserController::testUsers

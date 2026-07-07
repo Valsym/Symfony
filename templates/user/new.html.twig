@@ -3,23 +3,53 @@
 {% block title %}Форма регистрации пользователя{% endblock %}
 
 {% block content %}
-    <h1>Регистрация нового пользователя</h1>
+    <div class="container mt-4">
+        <h1>Регистрация нового пользователя</h1>
 
-    {% for label, messages in app.flashes %}
-        {% for message in messages %}
-            <div class="flash-{{ label }}">
-                {{ message }}
-            </div>
+        {% for label, messages in app.flashes %}
+            {% for message in messages %}
+{#                <div class="flash-{{ label }}"#}
+                <div class="alert flash-{{ label == 'error' ? 'danger' : 'success' }}">
+                    {{ message }}
+                </div>
+            {% endfor %}
         {% endfor %}
-    {% endfor %}
 
-    {{ form_start(form) }}
-    {{ form_errors(form) }}
-    {{ form_row(form.email) }}
-    {{ form_row(form.password) }}
-    {{ form_row(form.agreeTerms) }}
-    {{ form_widget(form.submit, {'attr': {'class': 'btn btn-primary'}}) }}
-    {{ form_end(form) }}
+        <div class="row">
+            <div class="col-md-6">
+                {{ form_start(form, {'attr': {'novalidate': 'novalidate'}}) }}
+                {{ form_errors(form) }}
+
+                <div class="mb-3">
+                    {{ form_label(form.email, 'Email', {'label_attr': {'class': 'form-label'}}) }}
+                    {{ form_widget(form.email, {'attr': {'class': 'form-control', 'placeholder': 'Введите действующий адрес'}}) }}
+                    {{ form_errors(form.email, {'attr': {'class': 'text-danger'}}) }}
+                </div>
+
+                <div class="mb-3">
+                    {{ form_label(form.password, 'Пароль', {'label_attr': {'class': 'form-label'}}) }}
+                    {{ form_widget(form.password, {'attr': {'class': 'form-control'}}) }}
+                    {{ form_errors(form.password, {'attr': {'class': 'text-danger'}}) }}
+                </div>
+
+                <div class="mb-3 form-check">
+                    {{ form_widget(form.agreeTerms, {'attr': {'class': 'form-check-input'}}) }}
+                    {{ form_label(form.agreeTerms, 'Я согласен с условиями', {'label_attr': {'class': 'form-check-label'}}) }}
+                </div>
+
+                {{ form_widget(form.submit, {'attr': {'class': 'btn btn-primary'}}) }}
+                {{ form_end(form) }}
+            </div>
+        </div>
+    </div>
+
+{#    {{ form_start(form) }}#}
+{#    {{ form_errors(form) }}#}
+{#    {{ form_row(form.email) }}#}
+{#    {{ form_row(form.password) }}#}
+{#    {{ form_row(form.agreeTerms) }}#}
+{#    {{ form_widget(form.submit, {'attr': {'class': 'btn btn-primary'}}) }}#}
+{#    {{ form_end(form) }}#}
 {% endblock %}
 
 
