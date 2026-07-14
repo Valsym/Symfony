@@ -14,11 +14,11 @@ contact_page:
     path: /contact
     controller: App\Controller\ContactController::show
 
-product_page:
-    path: /product/{slug}
-    controller: App\Controller\ProductController::show
-    requirements:
-        slug: '[a-zA-Z0-9-]+'
+#product_page:
+#    path: /product/{slug}
+#    controller: App\Controller\ProductController::show
+#    requirements:
+#        slug: '[a-zA-Z0-9-]+'
 
 api_user:
     path: api/user
