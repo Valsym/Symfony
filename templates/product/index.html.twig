@@ -5,6 +5,13 @@
 {% block body %}
     <h1>Product index</h1>
 
+    <div>
+        {{ form_start(filterForm, {'method': 'GET'}) }}
+        {{ form_widget(filterForm) }}
+        <button type="submit" class="btn btn-primary">Фильтровать</button>
+        {{ form_end(filterForm) }}
+    </div>
+
     <table class="table">
         <thead>
             <tr>

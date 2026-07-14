@@ -4,6 +4,7 @@ namespace App\Repository;
 
 use App\Entity\Product;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
@@ -24,6 +25,29 @@ class ProductRepository extends ServiceEntityRepository
 
         return $queryBuilder->getQuery()->getResult();
     }
+
+    public function search(?string $name, ?float $minPrice, ?float $maxPrice): QueryBuilder
+    {
+        $qb = $this->createQueryBuilder('p');
+
+        if ($name) {
+            $qb->andWhere('p.name LIKE :name')
+               ->setParameter('name', '%' . $name . '%');
+        }
+
+        if ($minPrice) {
+            $qb->andWhere('p.price >= :minPrice')
+               ->setParameter('minPrice', $minPrice);
+        }
+
+        if ($maxPrice) {
+            $qb->andWhere('p.price <= :maxPrice')
+               ->setParameter('maxPrice', $maxPrice);
+        }
+
+        return $qb;
+    }
+
     //    /**
     //     * @return Product[] Returns an array of Product objects
     //     */

@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\Product;
+use App\Form\ProductFilterType;
 use App\Form\ProductType;
 use App\Repository\ProductRepository;
 use Doctrine\ORM\EntityManagerInterface;
@@ -18,16 +19,43 @@ final class ProductController extends AbstractController
     #[Route(name: 'app_product_index', methods: ['GET'])]
     public function index(Request $request, ProductRepository $productRepository, PaginatorInterface $paginator): Response
     {
-        $query = $productRepository->createQueryBuilder('p')->getQuery();
-        $pagination = $paginator->paginate(
-            $query,
-            $request->query->getInt('page', 1), // Номер страницы
-            10 // Количество элементов на странице
-        );
+        $filterForm = $this->createForm(ProductFilterType::class, null, [
+            'method' => 'GET',
+        ]);
+        $filterForm->handleRequest($request);
+
+        // Отладка - раскомментируй для проверки
+        // dd($filterForm->getData(), $request->query->all());
+
+// Получаем данные напрямую из запроса
+//        $name = $request->query->get('name');
+//        $minPrice = $request->query->get('minPrice');
+//        $maxPrice = $request->query->get('maxPrice');
+
+        // Если нужно использовать фильтр через форму
+        $name = $filterForm->get('name')->getData();
+        $minPrice = $filterForm->get('minPrice')->getData();
+        $maxPrice = $filterForm->get('maxPrice')->getData();
+
+        $query = $productRepository->search($name, $minPrice, $maxPrice)->getQuery();
+        $pagination = $paginator->paginate($query, $request->query->getInt('page', 1), 10);
 
         return $this->render('product/index.html.twig', [
             'pagination' => $pagination,
+            'filterForm' => $filterForm->createView(),
         ]);
+//
+//
+//        $query = $productRepository->createQueryBuilder('p')->getQuery();
+//        $pagination = $paginator->paginate(
+//            $query,
+//            $request->query->getInt('page', 1), // Номер страницы
+//            10 // Количество элементов на странице
+//        );
+//
+//        return $this->render('product/index.html.twig', [
+//            'pagination' => $pagination,
+//        ]);
 
         // было без пагинации:
 //        return $this->render('product/index.html.twig', [
