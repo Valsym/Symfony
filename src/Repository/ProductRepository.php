@@ -3,6 +3,7 @@
 namespace App\Repository;
 
 use App\Entity\Product;
+use App\Entity\Category;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
@@ -26,7 +27,7 @@ class ProductRepository extends ServiceEntityRepository
         return $queryBuilder->getQuery()->getResult();
     }
 
-    public function search(?string $name, ?float $minPrice, ?float $maxPrice): QueryBuilder
+    public function search(?string $name, ?float $minPrice, ?float $maxPrice, ?Category $category): QueryBuilder
     {
         $qb = $this->createQueryBuilder('p');
 
@@ -44,6 +45,13 @@ class ProductRepository extends ServiceEntityRepository
             $qb->andWhere('p.price <= :maxPrice')
                ->setParameter('maxPrice', $maxPrice);
         }
+
+        if ($category) {
+            $qb->andWhere('p.category = :category')
+                ->setParameter('category', $category);
+        }
+        // Сортировка по ID по умолчанию
+        $qb->orderBy('p.id', 'ASC');
 
         return $qb;
     }

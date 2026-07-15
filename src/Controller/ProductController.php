@@ -36,8 +36,9 @@ final class ProductController extends AbstractController
         $name = $filterForm->get('name')->getData();
         $minPrice = $filterForm->get('minPrice')->getData();
         $maxPrice = $filterForm->get('maxPrice')->getData();
+        $category = $filterForm->get('category')->getData();
 
-        $query = $productRepository->search($name, $minPrice, $maxPrice)->getQuery();
+        $query = $productRepository->search($name, $minPrice, $maxPrice, $category)->getQuery();
         $pagination = $paginator->paginate($query, $request->query->getInt('page', 1), 10);
 
         return $this->render('product/index.html.twig', [

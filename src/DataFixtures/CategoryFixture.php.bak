@@ -1,0 +1,28 @@
+<?php
+
+namespace App\DataFixtures;
+
+use Doctrine\Bundle\FixturesBundle\Fixture;
+use Doctrine\Persistence\ObjectManager;
+use App\Entity\Category;
+
+class CategoryFixture extends Fixture
+{
+    public function load(ObjectManager $manager): void
+    {
+        $categories = ['Electronics', 'Books', 'Clothing', 'Home'];
+
+        foreach ($categories as $key => $categoryName) {
+            $category = new Category();
+            $category->setName($categoryName);
+            $manager->persist($category);
+
+            // Сохраняем ссылку на категорию, чтобы потом использовать в ProductFixtures
+            $this->addReference('category_' . $key, $category);
+
+        }
+
+        $manager->flush();
+    }
+}
+

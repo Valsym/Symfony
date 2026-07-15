@@ -16,6 +16,10 @@
                 <td>{{ product.name }}</td>
             </tr>
             <tr>
+                <th>Category</th>
+                <td>{{ product.category ? product.category.name : 'Нет категории' }}</td>
+            </tr>
+            <tr>
                 <th>Price</th>
                 <td>{{ product.price }}</td>
             </tr>
