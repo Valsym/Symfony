@@ -64,4 +64,21 @@ class UserController extends AbstractController
         dd($users); // dump and die - покажет массив пользователей
     }
 
+    #[Route('/admin', name: 'test_admin')]
+    public function testAdmin(UserRepository $userRepository): Response
+    {
+        return $this->render('user/admin.html.twig', [
+            'error' => null,  // или передать ошибку, если нужно
+        ]);
+    }
+
+    #[Route('/access-denied', name: 'app_access_denied')]
+    public function accessDenied(): Response
+    {
+        return $this->render('user/access_denied.html.twig', [
+            'message' => 'Доступ запрещен. У вас нет прав для просмотра этой страницы.'
+        ]);
+    }
+
+
 }
