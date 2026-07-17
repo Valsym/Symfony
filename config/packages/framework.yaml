@@ -8,6 +8,8 @@ framework:
     #esi: true
     #fragments: true
 
+    # serializer: { enable_attributes: true }
+
 when@test:
     framework:
         test: true

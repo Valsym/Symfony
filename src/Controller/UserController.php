@@ -1,19 +1,55 @@
 <?php
 namespace App\Controller;
 
+use OpenApi\Attributes as OA;
 use App\Entity\User;
 use App\Form\UserType;
-use App\Repository\ProductRepository;
 use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Serializer\SerializerInterface;
 
+#[OA\Tag(name: 'Users')]
 class UserController extends AbstractController
 {
+    #[OA\Response(
+        response: 200,
+        description: 'Возвращает список юзеров'
+    )]
+    #[Route('/api/users', name: 'api_users', methods: ['GET'])]
+    public function index(UserRepository $repository): JsonResponse
+    {
+        $users = $repository->findAll();
+        return $this->json($users, 200, [], ['groups' => ['public']]);
+
+//        return $this->json($products);
+
+    }
+
+    #[OA\Response(
+        response: 200,
+        description: 'Возвращает юзера по ID'
+    )]
+    #[OA\Response(
+        response: 404,
+        description: 'Юзер не найден'
+    )]
+    #[Route('/api/users/{id}', name: 'api_user_show', methods: ['GET'])]
+    public function show(User $user, SerializerInterface $serializer): Response
+    {
+        $data = $serializer->serialize($user, 'json', [
+            'datetime_format' => 'Y-m-d H:i:s',
+            'groups' => ['public'],  // <- добавить groups здесь
+        ]);
+
+        return new Response($data, 200, ['Content-Type' => 'application/json']);
+    }
+
     public function register(Request $request, EntityManagerInterface $em, UserPasswordHasherInterface $passwordHasher): Response
     {
         $user = new User();

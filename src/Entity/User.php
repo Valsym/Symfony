@@ -8,22 +8,26 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Serializer\Attribute\Groups;
 
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[UniqueEntity(fields: ['email'], message: 'There is already an account with this email')]
 class User implements PasswordAuthenticatedUserInterface, UserInterface
 {
+    #[Groups(['public'])]
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
     private ?int $id = null;
 
+    #[Groups(['public'])]
     #[ORM\Column(length: 255, unique: true)]
     #[Assert\NotBlank(message: "Email не может быть пустым")]
     #[Assert\Email(message: "Email '{{ value }}' не является валидным адресом")]
     private ?string $email = null;
 
+    #[Groups(['public'])]
     #[ORM\Column]
     private array $roles = [];
 

@@ -28,8 +28,8 @@ form_new:
     path: /form_new
     controller: App\Controller\ArticleController::new
 
-user_register:
-    path: /register
+user_register_old:
+    path: /register_old
     controller: App\Controller\UserController::register
 
 test_users:

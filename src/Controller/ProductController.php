@@ -27,11 +27,6 @@ final class ProductController extends AbstractController
         // Отладка - раскомментируй для проверки
         // dd($filterForm->getData(), $request->query->all());
 
-// Получаем данные напрямую из запроса
-//        $name = $request->query->get('name');
-//        $minPrice = $request->query->get('minPrice');
-//        $maxPrice = $request->query->get('maxPrice');
-
         // Если нужно использовать фильтр через форму
         $name = $filterForm->get('name')->getData();
         $minPrice = $filterForm->get('minPrice')->getData();
@@ -45,23 +40,6 @@ final class ProductController extends AbstractController
             'pagination' => $pagination,
             'filterForm' => $filterForm->createView(),
         ]);
-//
-//
-//        $query = $productRepository->createQueryBuilder('p')->getQuery();
-//        $pagination = $paginator->paginate(
-//            $query,
-//            $request->query->getInt('page', 1), // Номер страницы
-//            10 // Количество элементов на странице
-//        );
-//
-//        return $this->render('product/index.html.twig', [
-//            'pagination' => $pagination,
-//        ]);
-
-        // было без пагинации:
-//        return $this->render('product/index.html.twig', [
-//            'products' => $productRepository->findAll(),
-//        ]);
     }
 
     #[Route('/new', name: 'app_product_new', methods: ['GET', 'POST'])]

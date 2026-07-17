@@ -27,3 +27,7 @@ services:
 #        arguments:
 #            - '@SymfonyCasts\Bundle\VerifyEmail\VerifyEmailHelperInterface'
 
+    App\EventListener\NotFoundToJsonListener:
+        tags:
+            - { name: kernel.event_listener, event: kernel.exception, method: onKernelException }
+
