@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\User;
 use App\Form\RegistrationFormType;
 use App\Security\EmailVerifier;
+use App\Service\EmailSenderInterface; // Добавь импорт
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -17,11 +18,23 @@ use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use SymfonyCasts\Bundle\VerifyEmail\Exception\VerifyEmailExceptionInterface;
 
+//use SymfonyCasts\Bundle\VerifyEmail\Exception\VerifyEmailExceptionInterface;
+
 class RegistrationController extends AbstractController
 {
-    public function __construct(private EmailVerifier $emailVerifier)
-    {
+    public function __construct(
+        private EmailSenderInterface $emailSender // Используем интерфейс
+    ) {
     }
+    //private ?EmailVerifier $emailVerifier = null;
+
+//    public function __construct(?EmailVerifier $emailVerifier = null)
+//    {
+//        $this->emailVerifier = $emailVerifier;
+//    }
+//    public function __construct(private EmailVerifier $emailVerifier)
+//    {
+//    }
 
     #[Route('/register', name: 'app_register')]
     public function register(Request $request, UserPasswordHasherInterface $userPasswordHasher, Security $security, EntityManagerInterface $entityManager): Response
@@ -40,18 +53,27 @@ class RegistrationController extends AbstractController
             $entityManager->persist($user);
             $entityManager->flush();
 
-            // generate a signed url and email it to the user
-            $this->emailVerifier->sendEmailConfirmation('app_verify_email', $user,
-                (new TemplatedEmail())
-                    ->from(new Address('fanski@yandex.ru', 'fanski'))
-                    ->to((string) $user->getEmail())
-                    ->subject('Please Confirm your Email')
-                    ->htmlTemplate('registration/confirmation_email.html.twig')
-            );
+            // Отправляем email через наш сервис
+            $this->emailSender->sendConfirmationEmail($user);
+
+            // Отправляем email только если emailVerifier доступен
+//            if ($this?->emailVerifier) {
+//                $this->emailVerifier->sendEmailConfirmation('app_verify_email', $user,
+//                    (new TemplatedEmail())
+//                        ->from(new Address('fanski@yandex.ru', 'fanski'))
+//                        ->to((string)$user->getEmail())
+//                        ->subject('Please Confirm your Email')
+//                        ->htmlTemplate('registration/confirmation_email.html.twig')
+//                );
+//            }
 
             // do anything else you need here, like send an email
 
-            return $security->login($user, 'form_login', 'main');
+//            return
+            $security->login($user, 'form_login', 'main');
+
+            // Редиректим на главную
+            return $this->redirectToRoute('app_product_index');
         }
 
         return $this->render('registration/register.html.twig', [

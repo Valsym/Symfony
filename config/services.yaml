@@ -31,3 +31,6 @@ services:
         tags:
             - { name: kernel.event_listener, event: kernel.exception, method: onKernelException }
 
+    App\Service\EmailSenderInterface:
+        alias: App\Service\EmailSender
+        public: true
