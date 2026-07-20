@@ -1,0 +1,4 @@
+
+Отправлено: class LogActivitySubscriber: Новый юзер зарегился
+Отправлено: class LogActivitySubscriber: Новый юзер зарегился
+Отправлено: class LogActivitySubscriber: Новый юзер зарегился

@@ -7,6 +7,7 @@
 # Put parameters here that don't need to change on each machine where the app is deployed
 # https://symfony.com/doc/current/best_practices.html#use-parameters-for-application-configuration
 parameters:
+    app.notification_email: 'admin@example.com'
 
 services:
     # default configuration for services in *this* file
@@ -34,3 +35,20 @@ services:
     App\Service\EmailSenderInterface:
         alias: App\Service\EmailSender
         public: true
+
+    App\Service\NotificationService:
+        arguments:
+            $email: '%app.notification_email%'
+
+    App\EventListener\SendWelcomeEmailListener:
+        tags:
+            - { name: kernel.event_listener, event: user.registered, method: onUserRegistered }
+
+    App\EventSubscriber\LogActivitySubscriber:
+        tags:
+            - { name: kernel.event_subscriber }
+
+    mailer.transports:
+        class: Symfony\Component\Mailer\Transport\TransportInterface
+        factory: [ 'Symfony\Component\Mailer\Transport', 'fromDsn' ]
+        arguments: [ 'smtp://null:null@127.0.0.1:1025' ]

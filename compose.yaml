@@ -19,6 +19,15 @@ services:
       # - ./docker/db/data:/var/lib/postgresql/data:rw
 ###< doctrine/doctrine-bundle ###
 
+  mailpit:
+    image: axllent/mailpit:latest
+    container_name: symfony_mailpit
+    restart: unless-stopped
+    ports:
+      - "1025:1025"    # SMTP сервер
+      - "8025:8025"    # Web интерфейс для просмотра писем
+
+
 volumes:
 ###> doctrine/doctrine-bundle ###
   database_data:
