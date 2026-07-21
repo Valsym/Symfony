@@ -1,4 +1,6 @@
 framework:
     mailer:
-        dsn: 'smtp://null:null@127.0.0.1:1025'
+        # Не указывай здесь dsn!
+        enabled: true
+        #dsn: 'smtp://null:null@127.0.0.1:1025'
 

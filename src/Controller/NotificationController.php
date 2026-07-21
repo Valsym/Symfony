@@ -12,6 +12,7 @@ use Psr\Log\LoggerInterface;
 use Symfony\Component\Mailer\Transport;
 use Symfony\Component\Mailer\Mailer;
 use Symfony\Component\Mailer\Transport\TransportInterface;
+use App\Service\MailerService;
 
 #[Route('/note')]
 class NotificationController extends AbstractController
@@ -148,4 +149,32 @@ class NotificationController extends AbstractController
         }
     }
 
+    #[Route('/mailer-service-test', name: 'send_test')]
+    public function mailerServiceTest(MailerService $mailer, LoggerInterface $logger): Response
+    {
+        try {
+            $logger->info('sendTest: Starting...');
+
+            $mailer->send(
+                'user@example.com',
+                //$user->getEmail(),
+                'Добро пожаловать!',
+                'Спасибо за регистрацию!'
+            );
+//            $email = (new Email())
+//                ->from('test@example.com')
+//                ->to('user@example.com')
+//                ->subject('Test from Symfony')
+//                ->text('This is a test email');
+//
+//            $logger->info('sendTest: Sending...');
+//            $mailer->send($email);
+            $logger->info('sendTest: Sent!');
+
+            return new Response('Email sent successfully!');
+        } catch (\Exception $e) {
+            $logger->error('sendTest error: ' . $e->getMessage());
+            return new Response('Error: ' . $e->getMessage(), 500);
+        }
+    }
 }

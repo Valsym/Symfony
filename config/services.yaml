@@ -48,7 +48,11 @@ services:
         tags:
             - { name: kernel.event_subscriber }
 
-    mailer.transports:
-        class: Symfony\Component\Mailer\Transport\TransportInterface
-        factory: [ 'Symfony\Component\Mailer\Transport', 'fromDsn' ]
-        arguments: [ 'smtp://null:null@127.0.0.1:1025' ]
+    App\Service\MailerService:
+        arguments:
+            $mailerDsn: '%env(MAILER_DSN)%'
+
+#    mailer.transports:
+#        class: Symfony\Component\Mailer\Transport\TransportInterface
+#        factory: [ 'Symfony\Component\Mailer\Transport', 'fromDsn' ]
+#        arguments: [ '%env(MAILER_DSN)%' ]
