@@ -2,5 +2,7 @@ framework:
     mailer:
         # Не указывай здесь dsn!
         enabled: true
-        #dsn: 'smtp://null:null@127.0.0.1:1025'
+        dsn: 'smtp://null:null@127.0.0.1:1025'
+        message_bus: false
+
 

@@ -5,12 +5,14 @@ namespace App\Form;
 use App\Entity\User;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
+use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Form\Extension\Core\Type\PasswordType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints\IsTrue;
 use Symfony\Component\Validator\Constraints\Length;
 use Symfony\Component\Validator\Constraints\NotBlank;
+use Symfony\Component\Validator\Constraints as Assert;
 
 class RegistrationFormType extends AbstractType
 {
@@ -41,6 +43,20 @@ class RegistrationFormType extends AbstractType
                         // max length allowed by Symfony for security reasons
                         max: 4096,
                     ),
+                ],
+            ])
+            ->add('avatar', FileType::class, [
+                'mapped' => false, // Не сохраняется в БД напрямую
+                'attr' => [
+                    'placeholder' => 'Загрузите аватар (опционально)',
+                ],
+                'required' => false,
+                'constraints' => [
+                    new Assert\Image([
+                        'maxSize' => '2M',
+                        'mimeTypes' => ['image/jpeg', 'image/png', 'image/webp'],
+                        'mimeTypesMessage' => 'Пожалуйста, загрузите изображение (JPEG, PNG, WebP)',
+                    ])
                 ],
             ])
         ;

@@ -9,6 +9,8 @@
 parameters:
     app.notification_email: 'admin@example.com'
 
+    upload_directory: '%kernel.project_dir%/public/uploads'
+
 services:
     # default configuration for services in *this* file
     _defaults:
@@ -56,3 +58,12 @@ services:
 #        class: Symfony\Component\Mailer\Transport\TransportInterface
 #        factory: [ 'Symfony\Component\Mailer\Transport', 'fromDsn' ]
 #        arguments: [ '%env(MAILER_DSN)%' ]
+
+    Aws\S3\S3Client:
+        factory: [ 'App\Service\S3ClientFactory', 'create' ]
+
+    #League\Flysystem\Filesystem $s3Storage: '@s3_storage'
+
+#    Google\Cloud\Storage\StorageClient:
+#        factory: [ 'App\Service\GcsClientFactory', 'create' ]
+

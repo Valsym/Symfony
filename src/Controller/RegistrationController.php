@@ -12,6 +12,7 @@ use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Mime\Address;
@@ -19,6 +20,8 @@ use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use SymfonyCasts\Bundle\VerifyEmail\Exception\VerifyEmailExceptionInterface;
+use League\Flysystem\Filesystem;
+use Symfony\Component\DependencyInjection\Attribute\Autowire; // Добавь этот импорт
 
 //use SymfonyCasts\Bundle\VerifyEmail\Exception\VerifyEmailExceptionInterface;
 
@@ -43,13 +46,97 @@ class RegistrationController extends AbstractController
 //    }
 
     #[Route('/register', name: 'app_register')]
-    public function register(Request $request, UserPasswordHasherInterface $userPasswordHasher, Security $security, EntityManagerInterface $entityManager, EventDispatcherInterface $dispatcher): Response
+    public function register(Request $request,
+                             UserPasswordHasherInterface $userPasswordHasher,
+                             Security $security, EntityManagerInterface $entityManager,
+                             EventDispatcherInterface $dispatcher,
+                             #[Autowire(service: 's3_storage')] Filesystem $s3Storage): Response
     {
         $user = new User();
         $form = $this->createForm(RegistrationFormType::class, $user);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            /** @var UploadedFile $avatarFile */
+            $avatarFile = $form->get('avatar')->getData();
+
+            if ($avatarFile) {
+                // Генерируем уникальное имя
+                $newFilename = uniqid() . '.' . $avatarFile->guessExtension();
+
+                try {
+                    // Открываем поток для чтения файла
+                    $stream = fopen($avatarFile->getRealPath(), 'r+');
+
+                    // Записываем в MinIO (S3)
+                    $s3Storage->writeStream(
+                        'avatars/' . $newFilename,  // используем уникальное имя, а не оригинальное
+                        $stream
+                    );
+                    fclose($stream);
+
+                    // Сохраняем путь в сущность (относительный путь в MinIO)
+                    $user->setAvatar('avatars/' . $newFilename);
+                } catch (\Exception $e) {
+                    $this->addFlash('error', 'Ошибка при загрузке аватара: ' . $e->getMessage());
+                    return $this->redirectToRoute('app_register');
+                }
+            }
+
+            /** @var string $plainPassword */
+            $plainPassword = $form->get('plainPassword')->getData();
+
+            // encode the plain password
+            $user->setPassword($userPasswordHasher->hashPassword($user, $plainPassword));
+
+            $entityManager->persist($user);
+            $entityManager->flush();
+
+            // Отправляем email через наш сервис
+            $this->emailSender->sendConfirmationEmail($user);
+
+            // Авторизуем пользователя
+            $security->login($user, 'form_login', 'main');
+
+            // Создаем и диспатчим событие
+            $event = new UserRegisteredEvent($user);
+            $dispatcher->dispatch($event, UserRegisteredEvent::NAME);
+
+            // Редиректим на главную
+            return $this->redirectToRoute('app_product_index');
+        }
+
+        return $this->render('registration/register.html.twig', [
+            'registrationForm' => $form,
+        ]);
+    }
+
+
+    #[Route('/register_old', name: 'app_register_old')]
+    public function registerOld(Request $request, UserPasswordHasherInterface $userPasswordHasher, Security $security, EntityManagerInterface $entityManager, EventDispatcherInterface $dispatcher): Response
+    {
+        $user = new User();
+        $form = $this->createForm(RegistrationFormType::class, $user);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            /** @var UploadedFile $avatarFile */
+            $avatarFile = $form->get('avatar')->getData();
+
+            if ($avatarFile) {
+                // Генерируем уникальное имя
+                $newFilename = uniqid() . '.' . $avatarFile->guessExtension();
+
+                // Перемещаем файл в uploads/avatars
+                $avatarFile->move(
+                    $this->getParameter('upload_directory') . '/avatars',
+                    $newFilename
+                );
+
+                // Сохраняем путь в сущность
+                $user->setAvatar('uploads/avatars/' . $newFilename);
+            }
+
             /** @var string $plainPassword */
             $plainPassword = $form->get('plainPassword')->getData();
 

@@ -3,6 +3,7 @@
 namespace App\Service;
 
 use Symfony\Component\Mailer\Mailer;
+use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\Mailer\Transport;
 use Symfony\Component\Mime\Email;
 use Psr\Log\LoggerInterface;
@@ -14,7 +15,8 @@ class MailerService
 
     public function __construct(string $mailerDsn, LoggerInterface $logger)
     {
-        $transport = Transport::fromDsn($mailerDsn);
+
+        $transport = Transport::fromDsn($mailerDsn ?? 'smtp://null:null@127.0.0.1:1025');
         $this->mailer = new Mailer($transport);
         $this->logger = $logger;
     }

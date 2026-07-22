@@ -23,8 +23,8 @@ class LogActivitySubscriber implements EventSubscriberInterface
 
     public function logUserRegistration(UserRegisteredEvent $event): void
     {
-        $user = $event->getUser();
+        $userEmail = $event->getUser()->getEmail();
         // ... логика логирования
-        $result = $this->notificationService->sendNotification('class LogActivitySubscriber: Новый юзер зарегился');
+        $result = $this->notificationService->sendNotification("class LogActivitySubscriber: Новый юзер $userEmail зарегился");
     }
 }
