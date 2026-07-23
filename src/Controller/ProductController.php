@@ -33,8 +33,30 @@ final class ProductController extends AbstractController
         $maxPrice = $filterForm->get('maxPrice')->getData();
         $category = $filterForm->get('category')->getData();
 
-        $query = $productRepository->search($name, $minPrice, $maxPrice, $category)->getQuery();
-        $pagination = $paginator->paginate($query, $request->query->getInt('page', 1), 10);
+        // Определяем, используем ли кэш
+        $useCache = !$name && !$minPrice && !$maxPrice && !$category;
+
+        if ($useCache) {
+            // Берём из кэша
+            $products = $productRepository->findCachedProducts();
+
+            // Ручная пагинация для массива (т.к. из кэша возвращается массив)
+            $page = $request->query->getInt('page', 1);
+            $limit = 10;
+            $offset = ($page - 1) * $limit;
+
+            $paginatedProducts = array_slice($products, $offset, $limit);
+            $total = count($products);
+
+            $pagination = $paginator->paginate($paginatedProducts, $page, $limit);
+            $pagination->setTotalItemCount($total); // Устанавливаем общее количество
+        } else {
+            // Запрос в БД с фильтрацией
+            $query = $productRepository->search($name, $minPrice, $maxPrice, $category)->getQuery();
+            $pagination = $paginator->paginate($query, $request->query->getInt('page', 1), 10);
+        }
+//        $query = $productRepository->search($name, $minPrice, $maxPrice, $category)->getQuery();
+//        $pagination = $paginator->paginate($query, $request->query->getInt('page', 1), 10);
 
         return $this->render('product/index.html.twig', [
             'pagination' => $pagination,
@@ -64,11 +86,40 @@ final class ProductController extends AbstractController
     }
 
     #[Route('/{id}', name: 'app_product_show', methods: ['GET'])]
-    public function show(Product $product): Response
+    public function show(Product $product, Request $request): Response
     {
-        return $this->render('product/show.html.twig', [
+        $response = new Response($this->renderView('product/show.html.twig', [
             'product' => $product,
-        ]);
+        ]));
+
+        // Генерируем ETag на основе всех изменяемых полей
+        $etag = md5(
+            $product->getName() .
+            $product->getPrice() .
+            $product->getDescription() .
+            ($product->getCategory() ? $product->getCategory()->getId() : 'null')
+        );
+        // Или на основе хеша от всего объекта (сериализация)
+        $etag = md5(serialize($product));
+        $response->setEtag($etag);
+
+        // Генерируем ETag на основе содержимого статьи
+//        $etag = md5($response->getContent());
+//        $response->setEtag($etag);
+        // или ETag на основе времени последнего обновления
+//        $etag = md5($product->getUpdatedAt()->format('Y-m-d H:i:s'));
+//        $response->setEtag($etag);
+
+        // Проверяем, актуален ли кэш у клиента
+        if ($response->isNotModified($request)) {
+            return $response;
+        }
+
+        return $response;
+
+//        return $this->render('product/show.html.twig', [
+//            'product' => $product,
+//        ]);
     }
 
     #[Route('/{id}/edit', name: 'app_product_edit', methods: ['GET', 'POST'])]

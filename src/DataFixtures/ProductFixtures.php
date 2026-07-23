@@ -39,6 +39,33 @@ class ProductFixtures extends Fixture
             $randomIndex = array_rand($categoryEntities);
             $product->setCategory($categoryEntities[$randomIndex]);
 
+
+            // --- ДАТЫ ---
+
+            // publishedAt: дата в промежутке от года назад до сегодня
+            $product->setPublishedAt(
+                $faker->dateTimeBetween('-1 year', 'now')
+            );
+
+            // updatedAt: дата от publishedAt до сегодня (чтобы updatedAt был >= publishedAt)
+            $product->setUpdatedAt(
+                $faker->dateTimeBetween(
+                    $product->getPublishedAt(), // от даты публикации
+                    'now'                        // до сегодня
+                )
+            );
+
+//            // Для свежих продуктов (первые 10)
+//            if ($i < 10) {
+//                $product->setPublishedAt(new \DateTime('-'.rand(1, 30).' days'));
+//                $product->setUpdatedAt(new \DateTime('-'.rand(0, 5).' days'));
+//            }
+//            // Для старых продуктов (остальные)
+//            else {
+//                $product->setPublishedAt(new \DateTime('-'.rand(30, 365).' days'));
+//                $product->setUpdatedAt(new \DateTime('-'.rand(5, 30).' days'));
+//            }
+
             $manager->persist($product);
         }
 

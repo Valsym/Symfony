@@ -7,15 +7,25 @@ use App\Entity\Category;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
+use Symfony\Contracts\Cache\ItemInterface;
+use Symfony\Component\Cache\Adapter\RedisAdapter;
 
 /**
  * @extends ServiceEntityRepository<Product>
  */
+use Symfony\Contracts\Cache\CacheInterface;
+
 class ProductRepository extends ServiceEntityRepository
 {
-    public function __construct(ManagerRegistry $registry)
+    public function __construct(ManagerRegistry $registry, private CacheInterface $cache)
     {
         parent::__construct($registry, Product::class);
+
+        // Или инициализировать здесь
+//        $this->cache = new RedisAdapter(
+//            RedisAdapter::createConnection('redis://localhost:6379'),
+//            'products_'
+//        );
     }
 
     public function findProductsByKey(string $key)
@@ -55,6 +65,20 @@ class ProductRepository extends ServiceEntityRepository
 
         return $qb;
     }
+
+    public function findCachedProducts(): array
+    {
+        return $this->cache->get('latest_products', function (ItemInterface $item) {
+            $item->expiresAfter(7200); // 2 часа
+
+            return $this->createQueryBuilder('p')
+                ->orderBy('p.publishedAt', 'DESC')
+                ->setMaxResults(10)
+                ->getQuery()
+                ->getResult();
+        });
+    }
+
 
     //    /**
     //     * @return Product[] Returns an array of Product objects
