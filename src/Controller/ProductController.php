@@ -7,6 +7,7 @@ use App\Form\ProductFilterType;
 use App\Form\ProductType;
 use App\Repository\ProductRepository;
 use Doctrine\ORM\EntityManagerInterface;
+use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -151,5 +152,14 @@ final class ProductController extends AbstractController
         }
 
         return $this->redirectToRoute('app_product_index', [], Response::HTTP_SEE_OTHER);
+    }
+
+    public function someAction(LoggerInterface $logger): Response
+    {
+        $logger->warning('Тестовое сообщение WARNING уровня');
+        // или
+        $logger->error('Тестовое сообщение ERROR уровня');
+
+        return Response::create('Тестовое сообщение');
     }
 }

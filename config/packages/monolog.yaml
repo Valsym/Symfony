@@ -9,17 +9,36 @@ when@dev:
                 type: stream
                 path: "%kernel.logs_dir%/%kernel.environment%.log"
                 level: debug
+#                formatter: monolog.formatter.app_line
+
                 #channels: ["!event"]
             console:
                 type: console
                 process_psr_3_messages: false
 #                channels: ["!doctrine", "!console"]
                 channels: ["!event", "!doctrine"]#, "!console"]
+
 #            error_file:
 #                type: stream
 #                path: "%kernel.logs_dir%/errors.log"
 #                level: debug
                 # channels: [ 'main' ]
+            doctrine:
+                type: service
+                id: App\Logger\DoctrineHandler
+                level: warning  # Важно! Добавь уровень
+                channels: ["app"]  # Только наш канал
+#            telegram_critical:
+#                type: service
+#                id: App\Logger\TelegramHandler
+#                level: critical
+
+            main_critical_email:
+                type: service
+                id: App\Logger\EmailHandler
+                level: critical
+                channels: [ "!event", "!doctrine", "!mailer"]  # Добавь "!mailer"
+
 
 when@test:
     monolog:

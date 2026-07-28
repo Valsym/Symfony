@@ -67,3 +67,23 @@ services:
 #    Google\Cloud\Storage\StorageClient:
 #        factory: [ 'App\Service\GcsClientFactory', 'create' ]
 
+    App\Logger\DoctrineHandler:
+            arguments:
+                $em: '@doctrine.orm.entity_manager'
+
+
+#    App\Logger\TelegramHandler:
+#        arguments:
+#            $token: '%env(TELEGRAM_BOT_TOKEN)%'
+#            $chatId: '%env(TELEGRAM_ADMIN_CHAT_ID)%'
+
+    App\Logger\EmailHandler:
+        arguments:
+            $from: 'server@example.com'
+            $to: 'admin@example.com'
+            $subject: 'CRITICAL Error on %kernel.environment%'
+
+#    monolog.formatter.app_line:
+#        class: Monolog\Formatter\LineFormatter
+#        arguments:
+#            $format: "[%%datetime%%] %%channel%%.%%level_name%%: [%kernel.environment%] %%message%%\n"
