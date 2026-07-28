@@ -162,4 +162,19 @@ final class ProductController extends AbstractController
 
         return Response::create('Тестовое сообщение');
     }
+
+    #[Route('/test_prof', name: 'app_test_profiler0', methods: ['GET'])]
+    public function testProfiler(EntityManagerInterface $entityManager)
+    {
+        $products = $entityManager->getRepository(Product::class)->findAll();
+        $result = '';
+
+        foreach ($products as $product) {
+//            $category = $product->getCategory();
+            $categoryCount = count($product->getCategory()); // Запрос выполняется здесь! (N+1 проблема)
+            $result .= "Product {$product->getId()}: {$product->getName()} - Categories: {$categoryCount}\n";
+        }
+
+        return new Response($result);
+    }
 }
