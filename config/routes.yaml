@@ -15,3 +15,7 @@ controllers:
         path: ../src/Controller/
         namespace: App\Controller
     type: attribute
+
+easyadmin:
+    resource: .
+    type: easyadmin.routes

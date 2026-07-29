@@ -34,6 +34,13 @@ class LoginController extends AbstractController
         ]);
     }
 
+    #[Route('/logout', name: 'app_logout')]
+    public function logout(): void
+    {
+        // Этот метод может быть пустым - Symfony перехватит его
+        throw new \LogicException('This method can be blank - it will be intercepted by the logout key on your firewall.');
+    }
+
     #[Route('/api/login', name: 'api_login', methods: ['POST'])]
     public function loginApi(
         Request $request,

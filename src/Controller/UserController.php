@@ -100,7 +100,7 @@ class UserController extends AbstractController
         dd($users); // dump and die - покажет массив пользователей
     }
 
-    #[Route('/admin', name: 'test_admin')]
+    #[Route('/test_admin', name: 'test_admin')]
     public function testAdmin(UserRepository $userRepository): Response
     {
         return $this->render('user/admin.html.twig', [

@@ -11,6 +11,7 @@
         "doctrine/doctrine-bundle": "^2.18",
         "doctrine/doctrine-migrations-bundle": "^3.7",
         "doctrine/orm": "^3.6",
+        "easycorp/easyadmin-bundle": "*",
         "knplabs/knp-paginator-bundle": "^6.10",
         "league/flysystem-aws-s3-v3": "^3.35",
         "league/flysystem-bundle": "^3.7",

@@ -12,6 +12,10 @@ security:
         # users_in_memory: { memory: null }
 
     firewalls:
+        dev:
+            pattern: ^/(_(profiler|wdt)|css|images|js)/
+            security: false
+
         api:
             pattern: ^/api
             stateless: true
@@ -25,6 +29,11 @@ security:
                 default_target_path: app_product_index
             logout:
                 path: app_logout
+                target: app_login
+                # Если хотите перенаправлять на главную после выхода
+                # target: app_product_index
+
+            # Доступ к админке только для админов
             access_denied_handler: App\Security\AccessDeniedHandler
 #        dev:
 #            # Ensure dev tools and static assets are always allowed
@@ -44,6 +53,8 @@ security:
     access_control:
         - { path: ^/admin, roles: ROLE_ADMIN }
         - { path: ^/profile, roles: ROLE_USER }
+        - { path: ^/login, roles: PUBLIC_ACCESS }
+        - { path: ^/, roles: PUBLIC_ACCESS }
 
 when@test:
     security:

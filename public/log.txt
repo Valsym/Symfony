@@ -8,3 +8,4 @@
 Отправлено: class LogActivitySubscriber: Новый юзер зарегился
 Отправлено: class LogActivitySubscriber: Новый юзер test8@ya.ru зарегился
 Отправлено: class LogActivitySubscriber: Новый юзер test9@ya.ru зарегился
+Отправлено: class LogActivitySubscriber: Новый юзер admin@admin.com зарегился
