@@ -9,3 +9,4 @@
 Отправлено: class LogActivitySubscriber: Новый юзер test8@ya.ru зарегился
 Отправлено: class LogActivitySubscriber: Новый юзер test9@ya.ru зарегился
 Отправлено: class LogActivitySubscriber: Новый юзер admin@admin.com зарегился
+2929.JulJul.26262626 1515:0707 class LogActivitySubscriber: Новый юзер test5@ya.ru зарегился

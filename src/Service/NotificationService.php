@@ -16,7 +16,9 @@ class NotificationService
 
     public function sendNotification(string $message): string
     {
-        $this->logger->log("Отправлено: $message");
+        $date = date('d.M.y H:m');
+
+        $this->logger->log("$date $message");
         return "Уведомление отправлено: $message    email:" .  $this->email;
     }
 
